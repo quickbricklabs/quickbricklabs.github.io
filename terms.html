@@ -42,6 +42,29 @@
   footer { text-align: center; padding: 32px; border-top: 1px solid #1e1e1e; color: #555; font-size: 0.85rem; }
   footer a { color: #666; text-decoration: none; }
   footer a:hover { color: #e05c2a; }
+  .hamburger {
+    display: none; background: none; border: none; cursor: pointer;
+    flex-direction: column; gap: 5px; padding: 4px; margin-left: auto; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px; background: #e8e4df;
+    border-radius: 2px; transition: transform 0.3s, opacity 0.3s;
+  }
+  .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .hamburger { display: flex; }
+    .nav-links {
+      display: none; flex-direction: column; gap: 0;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(16px);
+      padding: 100px 40px 40px; z-index: 150;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1.5rem; padding: 16px 0; border-bottom: 1px solid #1e1e1e; }
+  }
 </style>
 </head>
 <body>
@@ -50,6 +73,9 @@
     <img src="Q.png" alt="QuickBrick logo">
     <span>QuickBrick</span>
   </a>
+  <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="privacy.html">Privacy Policy</a>
@@ -160,5 +186,20 @@
   <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
   <a href="contact.html">Contact</a>
 </footer>
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.nav-links');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', navLinks.classList.contains('open'));
+    document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('open');
+    document.body.style.overflow = '';
+  }));
+</script>
 </body>
 </html>
