@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact – QuickBrick</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0d0d0d; color: #e8e4df; min-height: 100vh; }
+  header { padding: 24px 40px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #1e1e1e; }
+  header img { height: 40px; width: 40px; object-fit: contain; }
+  header a.brand { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: #e8e4df; text-decoration: none; }
+  nav { display: flex; gap: 24px; margin-left: auto; }
+  nav a { font-size: 1.1rem; font-weight: 500; color: #b8b2aa; text-decoration: none; }
+  nav a:hover { color: #e05c2a; }
+  main { max-width: 560px; margin: 80px auto; padding: 0 24px 80px; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: #fff; margin-bottom: 12px; }
+  .subtitle { color: #888; margin-bottom: 48px; line-height: 1.6; }
+  label { display: block; font-size: 0.85rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  input, textarea, select { width: 100%; background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px 16px; color: #e8e4df; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+  input:focus, textarea:focus, select:focus { border-color: #e05c2a; }
+  textarea { resize: vertical; min-height: 140px; }
+  select option { background: #141414; }
+  .field { margin-bottom: 24px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; background: #e05c2a; color: #fff; border: none; border-radius: 8px; padding: 15px 32px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .btn:hover { background: #c94e20; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .success { display: none; background: #0e1f12; border: 1px solid #2e7d40; border-radius: 8px; padding: 20px 24px; color: #6fcf8a; margin-top: 24px; }
+  footer { text-align: center; padding: 32px; border-top: 1px solid #1e1e1e; color: #555; font-size: 0.85rem; }
+  footer a { color: #666; text-decoration: none; }
+  footer a:hover { color: #e05c2a; }
+</style>
+</head>
+<body>
+<header>
+  <img src="Q.png" alt="QuickBrick">
+  <a href="index.html" class="brand">QuickBrick</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="privacy.html">Privacy Policy</a>
+  </nav>
+</header>
+<main>
+  <h1>Contact Us</h1>
+  <p class="subtitle">Have a question, bug to report, or just want to say hi? We'd love to hear from you.</p>
+
+  <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="75cf2f46-ad12-4ea9-b759-ce7da80795e5">
+    <input type="hidden" name="subject" value="QuickBrick Contact Form">
+    <input type="hidden" name="redirect" value="false">
+    <input type="checkbox" name="botcheck" style="display:none">
+    <div class="field">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Your name" required>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required>
+    </div>
+    <div class="field">
+      <label for="subject">Subject</label>
+      <select id="subject" name="subject">
+        <option value="support">Support / Bug Report</option>
+        <option value="feature">Feature Request</option>
+        <option value="billing">Billing Question</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Tell us what's on your mind..." required></textarea>
+    </div>
+    <button type="submit" class="btn">Send Message</button>
+  </form>
+
+  <div class="success" id="successMsg">
+    ✓ Message sent! We'll get back to you at <strong id="replyEmail"></strong> shortly.
+  </div>
+</main>
+<footer>
+  &copy; 2026 QuickBrick Labs, LLC &nbsp;·&nbsp;
+  <a href="terms.html">Terms of Service</a> &nbsp;·&nbsp;
+  <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+  <a href="contact.html">Contact</a>
+</footer>
+<script>
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    const data = new FormData(form);
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: data
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      const email = document.getElementById('email').value;
+      document.getElementById('replyEmail').textContent = email;
+      document.getElementById('successMsg').style.display = 'block';
+      form.reset();
+    } else {
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again.');
+    }
+  });
+</script>
+</body>
+</html>
