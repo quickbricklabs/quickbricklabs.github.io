@@ -32,26 +32,47 @@
   footer a:hover { color: #e05c2a; }
   .hamburger {
     display: none; background: none; border: none; cursor: pointer;
-    flex-direction: column; gap: 5px; padding: 4px; margin-left: auto; z-index: 200;
+    flex-direction: column; gap: 5px; padding: 4px; margin-left: auto; z-index: 300;
+    -webkit-tap-highlight-color: transparent;
   }
   .hamburger span {
     display: block; width: 24px; height: 2px; background: #e8e4df;
-    border-radius: 2px; transition: transform 0.3s, opacity 0.3s;
+    border-radius: 2px; transition: transform 0.3s ease, opacity 0.2s ease;
   }
   .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .hamburger.active span:nth-child(2) { opacity: 0; }
   .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: #0d0d0d;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .mobile-overlay.open { display: flex; }
+  .mobile-overlay a {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: #b8b2aa;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .mobile-overlay a:hover, .mobile-overlay a:active {
+    color: #e05c2a;
+    background: rgba(224,92,42,0.08);
+  }
+  .mobile-overlay .overlay-footer {
+    position: absolute; bottom: 48px;
+    font-size: 0.8rem; color: #444;
+  }
   @media (max-width: 600px) {
     header { padding: 16px 20px; }
     .hamburger { display: flex; }
-    nav {
-      display: none; flex-direction: column; gap: 0;
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(13,13,13,0.97); backdrop-filter: blur(16px);
-      padding: 100px 40px 40px; z-index: 150; margin-left: 0;
-    }
-    nav.open { display: flex; }
-    nav a { font-size: 1.5rem; padding: 16px 0; border-bottom: 1px solid #1e1e1e; }
+    nav { display: none; }
   }
 </style>
 </head>
@@ -68,6 +89,12 @@
     <a href="privacy.html">Privacy Policy</a>
   </nav>
 </header>
+<div class="mobile-overlay" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <span class="overlay-footer">QuickBrick Labs, LLC</span>
+</div>
 <main>
   <h1>Contact Us</h1>
   <p class="subtitle">Have a question, bug to report, or just want to say hi? We'd love to hear from you.</p>
@@ -113,16 +140,17 @@
 </footer>
 <script>
   const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('header nav');
+  const overlay = document.getElementById('mobileMenu');
   hamburger.addEventListener('click', () => {
+    const isOpen = overlay.classList.toggle('open');
     hamburger.classList.toggle('active');
-    navLinks.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', navLinks.classList.contains('open'));
-    document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+    hamburger.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
   });
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    overlay.classList.remove('open');
     hamburger.classList.remove('active');
-    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }));
 </script>
